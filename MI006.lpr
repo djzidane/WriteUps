@@ -20,7 +20,7 @@ function LoadFile(fn:string):boolean;
 begin
   Plik:=TFileStream.Create(fn, fmOpenRead);
   SetLength(Bufor,plik.Size);
-  if plik.Size>0 then Plik.Read(Bufor[0],plik.size);
+  if plik.Size>0 then Plik.Read(Bufor[0],length(bufor));
   Plik.Free;
 end;
 
@@ -29,7 +29,6 @@ procedure WriteLnCon(s:string);
 var
   bw:dword;
 begin
-  s := s + #13#10;
   WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE),@s[1],length(s),bw,nil);
 end;
 {$else}
