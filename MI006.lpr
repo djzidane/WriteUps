@@ -15,6 +15,7 @@ var
   Bufor: array of char;
   TestString:string;
 
+// Funkcja wczytuje plik z danymi do bufora
 function LoadFile(fn:string):boolean;
    var
     plik:TFileStream;
@@ -33,6 +34,7 @@ function LoadFile(fn:string):boolean;
       end;
 end;
 
+// Procedura która zastepuje standardowe w FP write(), bo standardowa nie działa
 {$ifdef WINDOWS}
 procedure WriteLnCon(s:string);
 var
@@ -41,7 +43,7 @@ begin
   WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE),@s[1],length(s),bw,nil);
 end;
 {$else}
-procedure WriteLnUTF8(s:string);
+procedure WriteLnCon(s:string);
 begin
   writeln(s);
 end;
@@ -63,28 +65,41 @@ end;
 
 //===-=-===-===-=-=-// MAIN // =--=-=-----=----=
 begin
+
   // Ustawiam standardową stronę kodową
   SetConsoleOutputCP(DefaultSystemCodePage);
   SetTextCodepage(Output, DefaultSystemCodePage);
-  // Ekran główny
+
+  // Ekran główny [Tak by bylo troche ładniej]
   Mainscreen;
+
   // Ustawiam stronę kodową na IBM EBCDIC Multilingual/ROECE (Latin 2);
   // IBM EBCDIC Multilingual Latin 2
   SetConsoleOutputCP(870);
   SetTextCodepage(Output, 870);
+
   //Wczytuje plik z danymi z misji do bufora
   LoadFile(datafile);
 
+  //zcastowanie Bufora na string
   SetString(TestString,@bufor[0],length(bufor));
 
   // wyswietlam rozwiazanie zadania za pomoca funkcji "WriteConsole",
   // bo standardowa nie działa po zmianie kodowania
   Writeln;
   textcolor(15);
-  Writeln('FLAGA TO:');
-  WriteLnCon(TestString);
-  writeln;
 
+  //wypisanie flagi po zmianie strony kodowej
+  if TestString<>''
+   then
+    begin
+     Writeln('FLAGA TO:');
+     WriteLnCon(TestString);
+     writeln;
+    end;
+
+  // czekanie na wcisniecie dowolnego klawisza oraz
+  // owrót do ustawień standardowych strony kodowej i wyjscie z aplikacji.
   readkey;
   textcolor(7);
 
